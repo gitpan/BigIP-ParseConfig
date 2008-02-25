@@ -1,0 +1,48 @@
+=head1 NAME
+
+    BigIP::ParseConfig - F5/BigIP configuration parser
+
+=head1 SYNOPSIS
+
+    use BigIP::ParseConfig;
+
+    # Initialize module
+    my $bip = new BigIP::ParseConfig( '/config/bigip.conf' );
+
+    # Parse config
+    $bip->parse();
+
+    # Modify member IPs (x.109.x.x becomes x.209.x.x)
+    foreach my $pool ( keys %{$bip->{'Parsed'}->{'pool'}} ) {
+        my @members = @{$bip->{'Parsed'}->{'pool'}->{$pool}->{'members'}};
+        my @membersnew;
+
+        foreach my $node ( @members ) {
+            my @ip = split /\./, $node;
+            if ( $ip[1] && $ip[1] eq '109' ) {
+                $ip[1] = '209';
+                $node = join '.', @ip;
+            }
+            push @membersnew, $node;
+        }
+
+        @{$bip->{'Parsed'}->{'pool'}->{$pool}->{'members'}} = @membersnew;
+    }
+
+    # Write new config
+    # $bip->write( '/config/bigip.conf.new' );
+
+=head1 DESCRIPTION
+
+    BigIP::ParseConfig provides a Perl interface to reading, writing, and
+    manipulating F5 LTM configuration files.
+
+    This module is currently a work-in-progress.  Please e-mail with problems,
+    bug fixes, comments and complaints.
+
+=head1 AUTHOR
+
+    Scott Schneider <sschneid@gmail.com>
+
+=cut
+

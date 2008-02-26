@@ -1,44 +1,44 @@
 =head1 NAME
 
-    BigIP::ParseConfig - F5/BigIP configuration parser
+BigIP::ParseConfig - F5/BigIP configuration parser
 
 =head1 SYNOPSIS
 
-    use BigIP::ParseConfig;
-
-    # Module initialization
-    my $bip = new BigIP::ParseConfig( '/config/bigip.conf' );
-
-    # Iterate over pools
-    foreach my $pool ( $bip->pools() ) {
-        # Iterate over pool members
-        foreach my $member ( $bip->members( $pool ) ) {
-            # Change port from 80 to 443
-            if ( $member /^(\d+\.\d+\.\d+\.\d+):80/ ) {
-                push @members, "$1:443";
-                my $change = 1;
-            }
-        }
-        # Commit the change above (80->443)
-        if ( $change ) {
-            $bip->modify(
-                type => 'pool',
-                key  => $pool,
-                members => [ @members ]
-            );
-        }
-    }
-
-    # Write out a new config file
-    # $bip->write( '/config/bigip.conf.new' );
+  use BigIP::ParseConfig;
+  
+  # Module initialization
+  my $bip = new BigIP::ParseConfig( '/config/bigip.conf' );
+  
+  # Iterate over pools
+  foreach my $pool ( $bip->pools() ) {
+      # Iterate over pool members
+      foreach my $member ( $bip->members( $pool ) ) {
+          # Change port from 80 to 443
+          if ( $member /^(\d+\.\d+\.\d+\.\d+):80/ ) {
+              push @members, "$1:443";
+              my $change = 1;
+          }
+      }
+      # Commit the change above (80->443)
+      if ( $change ) {
+          $bip->modify(
+              type => 'pool',
+              key  => $pool,
+              members => [ @members ]
+          );
+      }
+  }
+  
+  # Write out a new config file
+  # $bip->write( '/config/bigip.conf.new' );
 
 =head1 DESCRIPTION
 
-    BigIP::ParseConfig provides a Perl interface to reading, writing, and
-    manipulating configuration files used on F5 (BigIP) LTM network devices.
+BigIP::ParseConfig provides a Perl interface to reading, writing, and
+manipulating configuration files used on F5 (BigIP) LTM network devices.
 
-    This module is currently a work-in-progress.  Please e-mail with problems,
-    bug fixes, comments and complaints.
+This module is currently a work-in-progress.  Please e-mail with problems,
+bug fixes, comments and complaints.
 
 =head1 CONSTRUCTOR
 
@@ -79,7 +79,7 @@ B<Example>
 
 List the names of all found objects of the referring method.
 
-B<Example>
+B<Examples>
 
   @pools = $bip->pools();
 
@@ -89,7 +89,7 @@ B<Example>
 
 List the members of a specified pool.
 
-B<Examples>
+B<Example>
 
   @members = $bip->pools( 'Production_LDAP_pool' );
 
@@ -120,7 +120,7 @@ B<Examples>
       key  => 'Production_LDAP_vip',
       persist => 'cookie'
   );
-
+  
   $bip->modify(
       type => 'pool',
       key  => 'Production_LDAP_pool',
@@ -132,7 +132,7 @@ B<Examples>
 Write out a new configuration file.  C<FILE> refers to the bigip.conf configuration
 file, usually found at /config/bigip.conf.
 
-B<Examples>
+B<Example>
 
   $bip->write( '/config/bigip.conf.new' );
 
@@ -140,7 +140,7 @@ B<Examples>
 
 =head1 AUTHOR
 
-    Scott Schneider <sschneid@gmail.com>
+Scott Schneider <sschneid@gmail.com>
 
 =cut
 

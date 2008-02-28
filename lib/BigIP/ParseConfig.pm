@@ -12,7 +12,7 @@ package BigIP::ParseConfig;
 # FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more
 # details.
 
-our $VERSION = '1.1.4';
+our $VERSION = '1.1.5';
 my  $AUTOLOAD;
 
 
@@ -99,7 +99,8 @@ sub write {
         foreach my $key ( keys %{$self->{'Parsed'}->{$obj}} ) {
             if ( $self->{'Modify'}->{$obj}->{$key} ) {
                 $self->{'Output'} .= "$obj $key {\n";
-                foreach my $attr ( keys %{$self->{'Parsed'}->{$obj}->{$key}} ) {
+                foreach my $attr ( $self->_order( $obj ) ) {
+                    next unless $self->{'Parsed'}->{$obj}->{$key}->{$attr};
                     $self->{'Modify'}->{$obj}->{$key}->{$attr} ||= $self->{'Parsed'}->{$obj}->{$key}->{$attr};
                     if ( ref $self->{'Modify'}->{$obj}->{$key}->{$attr} eq 'ARRAY' ) {
                         if ( @{$self->{'Modify'}->{$obj}->{$key}->{$attr}} > 1 ) {
@@ -146,6 +147,24 @@ sub _objectlist {
     else {
         return 0;
     }
+}
+
+# Define object attribute ordering
+sub _order {
+    my $self = shift;
+
+    for ( shift ) {
+        /auth/      && return qw( bind login search servers service ssl user);
+        /monitor/   && return qw( default base debug filter mandatoryattrs password security username interval timeout manual dest recv send);
+        /node/      && return qw( monitor screen);
+        /partition/ && return qw( description);
+        /pool/      && return qw( lb nat monitor members);
+        /self/      && return qw( netmask unit floating vlan allow);
+        /user/      && return qw( password description id group home shell role);
+        /virtual/   && return qw( translate snat pool destination ip rules profiles persist);
+
+        return 0;
+    };
 }
 
 # Parse the configuration file

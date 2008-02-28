@@ -1,3 +1,12 @@
+1.1.5
+* Thu Feb 28 2008 Scott Schneider <sschneid@gmail.com>
+- Added _order method - modified object attributes now written in correct order
+
+1.1.2 - 1.1.4
+* Tue Feb 26 2008 Scott Schneider <sschneid@gmail.com>
+- (Completely) reworked parser
+- POD clean-up
+
 1.1.1
 * Mon Feb 25 2008 Scott Schneider <sschneid@gmail.com>
 - initial version

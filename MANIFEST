@@ -1,4 +1,9 @@
-CHANGELOG
+Changes
+MANIFEST
+META.yml
 Makefile.PL
-test.pl
 lib/BigIP/ParseConfig.pm
+t/00-load.t
+t/pod-coverage.t
+t/pod.t
+

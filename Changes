@@ -1,3 +1,10 @@
+Revision history for BigIP-ParseConfig
+
+1.1.6
+* X Scott Schneider <sschneid@gmail.com>
+- Initial _xtra (pool member priority, etc) support
+- Added (very basic) tests for CPAN
+
 1.1.5
 * Thu Feb 28 2008 Scott Schneider <sschneid@gmail.com>
 - Added _order method - modified object attributes now written in correct order

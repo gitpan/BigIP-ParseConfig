@@ -12,7 +12,7 @@ package BigIP::ParseConfig;
 # FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more
 # details.
 
-our $VERSION = '1.1.5';
+our $VERSION = '1.1.6';
 my  $AUTOLOAD;
 
 
@@ -107,6 +107,9 @@ sub write {
                             $self->{'Output'} .= "   $attr\n";
                             foreach my $val ( @{$self->{'Modify'}->{$obj}->{$key}->{$attr}} ) {
                                 $self->{'Output'} .= "      $val\n";
+                                if ( $self->{'Parsed'}->{$obj}->{$key}->{'_xtra'}->{$val} ) { 
+                                    $self->{'Output'} .= '         ' . $self->{'Parsed'}->{$obj}->{$key}->{'_xtra'}->{$val}  . "\n";
+                                }
                             }
                         }
                         else {
@@ -141,6 +144,11 @@ sub _objectlist {
 
     $self->{'Parsed'} ||= $self->_parse();
 
+#
+#use Data::Dumper;
+#print Dumper $self->{'Parsed'}->{$obj};
+#
+
     if ( $self->{'Parsed'}->{$obj} ) {
         return keys %{$self->{'Parsed'}->{$obj}};
     }
@@ -154,14 +162,14 @@ sub _order {
     my $self = shift;
 
     for ( shift ) {
-        /auth/      && return qw( bind login search servers service ssl user);
-        /monitor/   && return qw( default base debug filter mandatoryattrs password security username interval timeout manual dest recv send);
-        /node/      && return qw( monitor screen);
-        /partition/ && return qw( description);
-        /pool/      && return qw( lb nat monitor members);
-        /self/      && return qw( netmask unit floating vlan allow);
-        /user/      && return qw( password description id group home shell role);
-        /virtual/   && return qw( translate snat pool destination ip rules profiles persist);
+        /auth/      && return qw( bind login search servers service ssl user );
+        /monitor/   && return qw( default base debug filter mandatoryattrs password security username interval timeout manual dest recv send );
+        /node/      && return qw( monitor screen );
+        /partition/ && return qw( description );
+        /pool/      && return qw( lb nat monitor members );
+        /self/      && return qw( netmask unit floating vlan allow );
+        /user/      && return qw( password description id group home shell role );
+        /virtual/   && return qw( translate snat pool destination ip rules profiles persist );
 
         return 0;
     };
@@ -205,6 +213,12 @@ sub _parse {
                 no strict 'refs';
                 push @{$parsed->{$data->{'obj'}}->{$data->{'key'}}->{$data->{'list'}}}, $1;
                 use strict 'refs';
+
+                $data->{'last'} = $1;
+            }
+
+            if ( $ln =~ /^\s{9}((\w+|\d+).+?)$/ && $data->{'list'} ) {
+                $parsed->{$data->{'obj'}}->{$data->{'key'}}->{'_xtra'}->{$data->{'last'}} = $1;
             }
         }
     }

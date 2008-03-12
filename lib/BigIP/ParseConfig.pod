@@ -73,6 +73,8 @@ B<Example>
 
 =item routes
 
+=item rules
+
 =item users
 
 =item virtuals

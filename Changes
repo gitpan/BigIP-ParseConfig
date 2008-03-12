@@ -1,7 +1,11 @@
 Revision history for BigIP-ParseConfig
 
+1.1.7
+* Wed Mar 12 2008 Scott Schneider <sschneid@gmail.com>
+- Fixed CPAN test (re: Test::Pod::Coverage) errors
+
 1.1.6
-* X Scott Schneider <sschneid@gmail.com>
+* Mon Mar 10 2008 Scott Schneider <sschneid@gmail.com>
 - Initial _xtra (pool member priority, etc) support
 - Added (very basic) tests for CPAN
 

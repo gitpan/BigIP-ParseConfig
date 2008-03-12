@@ -12,7 +12,7 @@ package BigIP::ParseConfig;
 # FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more
 # details.
 
-our $VERSION = '1.1.6';
+our $VERSION = '1.1.7';
 my  $AUTOLOAD;
 
 

@@ -12,7 +12,7 @@ package BigIP::ParseConfig;
 # FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more
 # details.
 
-our $VERSION = '1.1.7';
+our $VERSION = '1.1.8';
 my  $AUTOLOAD;
 
 
@@ -44,6 +44,17 @@ sub routes     { return shift->_objectlist( 'route' ); }
 sub rules      { return shift->_objectlist( 'rule' ); }
 sub users      { return shift->_objectlist( 'user' ); }
 sub virtuals   { return shift->_objectlist( 'virtual' ); }
+
+# Return an object hash
+sub monitor    { return shift->_object( 'monitor', shift ); }
+sub node       { return shift->_object( 'node', shift ); }
+sub partition  { return shift->_object( 'partition', shift ); }
+sub pool       { return shift->_object( 'pool', shift ); }
+sub profile    { return shift->_object( 'profile', shift ); }
+sub route      { return shift->_object( 'route', shift ); }
+sub rule       { return shift->_object( 'rule', shift ); }
+sub user       { return shift->_object( 'user', shift ); }
+sub virtual    { return shift->_object( 'virtual', shift ); }
 
 # Return a list of pool members
 sub members {
@@ -137,17 +148,23 @@ sub write {
 
 
 
+# Return an object hash
+sub _object {
+    my $self = shift;
+    my $obj  = shift;
+    my $var  = shift;
+
+    $self->{'Parsed'} ||= $self->_parse();
+
+    return $self->{'Parsed'}->{$obj}->{$var} || 0;
+}
+
 # Return a list of objects
 sub _objectlist {
     my $self = shift;
     my $obj  = shift;
 
     $self->{'Parsed'} ||= $self->_parse();
-
-#
-#use Data::Dumper;
-#print Dumper $self->{'Parsed'}->{$obj};
-#
 
     if ( $self->{'Parsed'}->{$obj} ) {
         return keys %{$self->{'Parsed'}->{$obj}};
@@ -196,14 +213,17 @@ sub _parse {
         if ( $ln =~ /^(auth|monitor|node|partition|pool|profile|route|rule|self|user|virtual)\s+(.*)\s+{$/ ) {
             $data->{'obj'} = $1;
             $data->{'key'} = $2;
-          # $P = \${$self->{'Parsed'}}->{$1}->{$2};
         }
 
         if ( $data->{'obj'} && $data->{'key'} ) {
             $self->{'Raw'}->{$data->{'obj'}}->{$data->{'key'}} .= $ln;
 
             if ( $ln =~ /^\s{3}(\w+)\s+(.+?)$/ ) {
-              # $$P->{$1} = $2;
+                # Patch for older-styled pool syntax
+                if ( $1 eq 'member' ) {
+                    push @{$parsed->{$data->{'obj'}}->{$data->{'key'}}->{'members'}}, $2;
+                    next;
+                };
                 $parsed->{$data->{'obj'}}->{$data->{'key'}}->{$1} = $2;
             }
 

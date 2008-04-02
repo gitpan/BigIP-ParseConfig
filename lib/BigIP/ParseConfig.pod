@@ -87,13 +87,43 @@ B<Examples>
 
   @virtuals = $bip->virtuals();
 
+=item monitor ( MONITOR )
+
+=item node ( NODE )
+
+=item partition ( PARTITION )
+
+=item pool ( POOL )
+
+=item profile ( PROFILE )
+
+=item route ( ROUTE )
+
+=item rule ( RULE )
+
+=item user ( USER )
+
+=item virtual ( VIRTUAL )
+
+Return a hash of the object specified.
+
+B<Examples>
+
+  %sschneid = $bip->user( 'sschneid' );
+
+  $monitor = $bip->pool( 'Production_LDAP_pool')->{'monitor'};
+
 =item members ( POOL )
 
 List the members of a specified pool.
 
 B<Example>
 
-  @members = $bip->pools( 'Production_LDAP_pool' );
+  @members = $bip->members( 'Production_LDAP_pool' );
+
+Note that this is identical to using the I<pool> method:
+
+  @members = @{$bip->pool( 'Production_LDAP_pool' )->{'members'}};
 
 =item modify ( OPTIONS )
 

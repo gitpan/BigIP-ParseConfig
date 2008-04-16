@@ -30,7 +30,7 @@ BigIP::ParseConfig - F5/BigIP configuration parser
   }
   
   # Write out a new config file
-  # $bip->write( '/config/bigip.conf.new' );
+  $bip->write( '/config/bigip.conf.new' );
 
 =head1 DESCRIPTION
 

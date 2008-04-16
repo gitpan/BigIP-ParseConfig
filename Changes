@@ -1,5 +1,9 @@
 Revision history for BigIP-ParseConfig
 
+1.1.9
+* Wed Apr 16 2008 Scott Schneider <sschneid@gmail.com>
+- Ill-formatted (eg: blank) objects no longer ignored during parse/write
+
 1.1.8
 * Wed Apr 02 2008 Scott Schneider <sschneid@gmail.com>
 - Added _object method - returns object hash for monitor, node, partition, pool, profile, route, rule, user, and virtual methods

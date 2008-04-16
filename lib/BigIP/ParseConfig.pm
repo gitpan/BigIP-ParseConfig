@@ -12,7 +12,7 @@ package BigIP::ParseConfig;
 # FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more
 # details.
 
-our $VERSION = '1.1.8';
+our $VERSION = '1.1.9';
 my  $AUTOLOAD;
 
 
@@ -107,7 +107,7 @@ sub write {
     die "No changes found; no write necessary" unless $self->{'Modify'};
 
     foreach my $obj ( qw( self partition route user monitor auth profile node pool rule virtual ) ) {
-        foreach my $key ( keys %{$self->{'Parsed'}->{$obj}} ) {
+        foreach my $key ( sort keys %{$self->{'Parsed'}->{$obj}} ) {
             if ( $self->{'Modify'}->{$obj}->{$key} ) {
                 $self->{'Output'} .= "$obj $key {\n";
                 foreach my $attr ( $self->_order( $obj ) ) {
@@ -222,6 +222,7 @@ sub _parse {
                 # Patch for older-styled pool syntax
                 if ( $1 eq 'member' ) {
                     push @{$parsed->{$data->{'obj'}}->{$data->{'key'}}->{'members'}}, $2;
+                    $self->{'ConfigVer'} ||= '9.2';
                     next;
                 };
                 $parsed->{$data->{'obj'}}->{$data->{'key'}}->{$1} = $2;
@@ -241,6 +242,13 @@ sub _parse {
                 $parsed->{$data->{'obj'}}->{$data->{'key'}}->{'_xtra'}->{$data->{'last'}} = $1;
             }
         }
+    }
+
+    # Fill in ill-formatted objects
+    foreach my $obj ( keys %{$self->{'Raw'}} ) {
+        foreach my $key ( keys %{$self->{'Raw'}->{$obj}} ) {
+            $parsed->{$obj}->{$key} ||= $self->{'Raw'}->{$obj}->{$key};
+        }   
     }
 
     return $parsed;
